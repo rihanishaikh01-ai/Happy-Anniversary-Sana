@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Love Story — Happy 4th Anniversary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,300&family=Inter:wght@200;400;600&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-gold: #d4af37;
+            --color-rose: #fda4af;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #f3f4f6;
+            overflow-x: hidden;
+            margin: 0;
+        }
+        .font-serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Custom Custom Scrollbar for Luxury Look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f1f1f;
+            border-radius: 3px;
+        }
+        /* Glassmorphism utility */
+        .glass {
+            background: rgba(15, 15, 15, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-premium {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.8) 0%, rgba(5, 5, 5, 0.9) 100%);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        /* Aurora background animations */
+        .aurora {
+            position: fixed;
+            width: 800px;
+            height: 800px;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.12;
+            z-index: 0;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            transition: all 2s ease-in-out;
+        }
+        .aurora-rose { background: radial-gradient(circle, #f43f5e 0%, transparent 70%); top: -20%; left: -10%; }
+        .aurora-gold { background: radial-gradient(circle, #fbbf24 0%, transparent 70%); bottom: -20%; right: -10%; }
+        
+        /* Heartbeat Animation */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(244,63,94,0.6)); }
+            30% { transform: scale(1.15); filter: drop-shadow(0 0 25px rgba(244,63,94,0.9)); }
+            60% { transform: scale(1.05); filter: drop-shadow(0 0 15px rgba(244,63,94,0.7)); }
+        }
+        .animate-heartbeat { animation: heartbeat 1.4s infinite ease-in-out; }
+
+        /* Floating Items */
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+        .animate-float { animation: float-slow 6s infinite ease-in-out; }
+
+        /* Letter Reveal Effect */
+        .reveal-delay-1 { animation-delay: 1s; }
+        .reveal-delay-2 { animation-delay: 2s; }
+        
+        /* Interactive Card Flip */
+        .flip-card-inner {
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Custom luxury paths for milestones */
+        .roadmap-line {
+            background: linear-gradient(to bottom, transparent, rgba(212,175,55,0.4) 15%, rgba(244,63,94,0.4) 85%, transparent);
+        }
+    </style>
+</head>
+<body x-data="loveStoryApp()" class="antialiased select-none relative min-h-screen">
+
+    <div class="aurora aurora-rose"></div>
+    <div class="aurora aurora-gold"></div>
+    <canvas id="particleCanvas" class="fixed inset-0 w-full h-full pointer-events-none z-10"></canvas>
+
+    <div class="fixed top-6 left-6 z-50 glass px-4 py-2 rounded-full text-xs tracking-widest flex items-center gap-3 border border-rose-500/20" x-show="currentChapter > 0">
+        <span class="text-rose-400 animate-pulse"><i class="fa-solid fa-heart"></i></span>
+        <span>HEARTS FOUND: <span x-text="foundHearts" class="font-bold text-gold-400 text-rose-300">0</span>/6</span>
+    </div>
+
+    <div class="fixed top-6 right-6 z-50 glass px-4 py-2 rounded-full text-xs tracking-widest text-zinc-400" x-show="currentChapter > 0">
+        SCENE <span x-text="currentChapter" class="text-white font-medium"></span> / 13
+    </div>
+
+    <div x-show="currentChapter === 0" x-transition:leave="transition ease-in duration-1000 transform opacity-0" 
+         class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center p-6 text-center">
+        
+        <div class="space-y-8 max-w-xl">
+            <div class="mb-4">
+                <i class="fa-solid fa-heart text-5xl text-rose-600 animate-heartbeat cursor-pointer"></i>
+            </div>
+            
+            <div class="space-y-4">
+                <h1 class="font-serif text-3xl md:text-4xl text-zinc-300 tracking-wide opacity-0 animate-fade-in" style="animation: fadeIn 2s forwards 0.5s;">
+                    Hi Sana... ❤️
+                </h1>
+                <p class="font-light text-zinc-500 tracking-wider text-sm opacity-0" style="animation: fadeIn 2s forwards 2s;">
+                    Before I wish you a Happy Anniversary...
+                </p>
+                <p class="font-light text-zinc-500 tracking-wider text-sm opacity-0" style="animation: fadeIn 2s forwards 3.5s;">
+                    May I ask you a few questions?
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8 opacity-0" style="animation: fadeIn 1.5s forwards 5s;">
+                <button @click="nextChapter()" class="glass px-8 py-3 rounded-full text-sm tracking-widest text-zinc-300 hover:text-rose-300 hover:border-rose-500/40 transition-all duration-500 transform hover:scale-105">
+                    ❤️ OF COURSE
+                </button>
+                <button @click="nextChapter()" class="glass px-8 py-3 rounded-full text-sm tracking-widest text-zinc-300 hover:text-amber-300 hover:border-amber-500/40 transition-all duration-500 transform hover:scale-105">
+                    🥰 I'M CURIOUS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <template x-if="currentChapter === 1">
+        <div class="min-h-screen flex items-center justify-center p-6 relative z-20">
+            <div class="max-w-2xl text-center space-y-8">
+                <div class="text-8xl font-serif text-transparent bg-clip-text bg-gradient-to-b from-amber-200 to-amber-500 opacity-80 tracking-tighter select-none animate-pulse">
+                    4
+                </div>
+                <div class="space-y-4 font-serif text-2xl md:text-3xl text-zinc-200 font-light leading-relaxed">
+                    <p>Do you remember the day our story began?</p>
+                    <p class="text-base font-sans text-zinc-500 tracking-wide mt-2">Who knew two ordinary people could create such an extraordinary story?</p>
+                    <p class="text-lg text-zinc-400 italic mt-6">If you could go back to our very first conversation...</p>
+                    <p class="text-lg text-zinc-400 italic">Would you change anything?</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+                    <button @click="nextChapter()" class="glass px-8 py-3 rounded-full text-xs tracking-widest hover:border-rose-500/30 transition-all duration-300">
+                        ❤️ NOT EVEN ONE THING
+                    </button>
+                    <button @click="nextChapter()" class="glass px-8 py-3 rounded-full text-xs tracking-widest hover:border-amber-500/30 transition-all duration-300">
+                        ✨ I'D RELIVE EVERYTHING
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template x-if="currentChapter === 2">
+        <div class="min-h-screen flex items-center justify-center p-6 relative z-20">
+            <div class="max-w-xl text-center space-y-8" x-data="{ revealed: false, revealed2: false, step: 1 }">
+                
+                <div x-show="step === 1" class="space-y-6">
+                    <h2 class="font-serif text-3xl text-zinc-200">Can I tell you something?</h2>
+                    <button @click="step = 2" class="glass px-8 py-3 rounded-full text-xs tracking-widest text-rose-300 hover:bg-rose-950/20 transition-all">
+                        CLICK TO REVEAL
+                    </button>
+                </div>
+
+                <div x-show="step === 2" class="space-y-6">
+                    <p class="font-serif text-3xl text-amber-200">Your smile has always been my favorite place. ❤️</p>
+                    <p class="text-zinc-400 text-sm tracking-wider pt-4">Do you know how many times your smile has made my bad day disappear?</p>
+                    <div class="flex gap-4 justify-center pt-2">
+                        <button @click="step = 3" class="glass px-6 py-2 rounded-full text-xs">😊 COUNTLESS TIMES</button>
+                        <button @click="step = 3" class="glass px-6 py-2 rounded-full text-xs">❤️ EVERY TIME</button>
+                    </div>
+                </div>
+
+                <div x-show="step === 3" class="space-y-6">
+                    <p class="font-serif text-2xl text-zinc-300">Promise me you'll never stop smiling?</p>
+                    <button @click="triggerSmileBloom()" class="glass-premium px-10 py-3 rounded-full text-xs tracking-widest text-amber-400 border border-amber-500/30 hover:scale-105 transition-all">
+                        ❤️ I PROMISE
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template x-if="currentChapter === 3">
+        <div class="min-h-screen flex items-center justify-center p-6 relative z-20" x-data="{ activeCompliment: 0 }">
+            <div class="max-w-2xl w-full text-center space-y-12">
+                <h2 class="font-serif text-4xl text-zinc-100 tracking-wide">Things I Know About You...</h2>
+                
+                <div class="relative h-48 flex items-center justify-center">
+                    <template x-for="(comp, index) in compliments">
+                        <div x-show="activeCompliment === index" 
+                             x-transition:enter="transition ease-out duration-500 transform scale-95 opacity-0"
+                             x-transition:leave="transition ease-in duration-300 transform scale-105 opacity-0"
+                             class="absolute glass-premium p-8 rounded-2xl w-full border border-rose-500/20 shadow-2xl shadow-rose-950/20">
+                            <i class="fa-solid fa-sparkles text-amber-400 text-xl mb-3 block"></i>
+                            <p class="font-serif text-2xl text-rose-100" x-text="comp"></p>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="flex justify-between items-center max-w-xs mx-auto pt-4">
+                    <button @click="activeCompliment = activeCompliment > 0 ? activeCompliment - 1 : compliments.length - 1" class="text-zinc-500 hover:text-white transition">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <span class="text-xs text-zinc-500 tracking-widest" x-text="`${activeComplement + 1} / ${compliments.length}`"></span>
+                    <button @click="if(activeCompliment < compliments.length - 1) { activeCompliment++ } else { nextChapter() }" class="glass px-6 py-2 rounded-full text-xs tracking-widest text-amber-400">
+                        <span x-text="activeCompliment === compliments.length - 1 ? 'CONTINUE ❤️' : 'NEXT ✨'"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template x-if="currentChapter === 4">
+        <div class="min-h-screen py-20 px-6 relative z-20 max-w-6xl mx-auto flex flex-col justify-center">
+            <h2 class="font-serif text-4xl text-center text-zinc-100 mb-4">Our Beautiful Moments</h2>
+            <p class="text-center text-zinc-500 text-xs tracking-widest mb-12">CLICK EACH CHAPTER CARD TO REMINISCE</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <template x-for="(m, i) in memories">
+                    <div @click="openMemoryModal(m)" class="glass p-6 rounded-xl cursor-pointer hover:border-rose-500/40 transition-all duration-300 transform hover:-translate-y-2 group flex flex-col justify-between h-40">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-mono text-zinc-600" x-text="'0' + (i+1)"></span>
+                            <i class="fa-solid fa-heart text-zinc-800 group-hover:text-rose-500/40 transition-colors"></i>
+                        </div>
+                        <h3 class="font-serif text-xl text-zinc-200 group-hover:text-amber-200 transition-colors" x-text="m.title"></h3>
+                        <span class="text-[10px] tracking-widest text-zinc-500 uppercase">Open Chapter &rarr;</span>
+                    </div>
+                </template>
+            </div>
+
+            <div class="mt-12 text-center">
+                <button @click="nextChapter()" class="glass px-10 py-3 rounded-full text-xs tracking-widest text-zinc-400 hover:text-white" :disabled="viewedMemories.length < 3">
+                    <span x-text="viewedMemories.length >= 3 ? 'CONTINUE JOURNEY' : `EXPLORE AT LEAST ${3 - viewedMemories.length} MORE MEMORIES`"></span>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <template x-if="currentChapter === 5">
+        <div class="min-h-screen flex items-center justify-center p-6 relative z-20">
+            <div class="max-w-xl w-full glass-premium p-8 rounded-2xl space-y-6" x-data="{ qStep: 0 }">
+                <div class="w-full bg-zinc-800 h-1 rounded-full overflow-hidden">
+                    <div class="bg-rose-500 h-full transition-all duration-300" :style="`width: ${(qStep/questions.length)*100}%`"></div>
+                </div>
+
+                <template x-for="(q, index) in questions">
+                    <div x-show="qStep === index" class="space-y-4">
+                        <span class="text-xs text-rose-400 tracking-widest uppercase font-semibold">Question for Sana</span>
+                        <h3 class="font-serif text-2xl text-zinc-100" x-text="q.text"></h3>
+                        <input type="text" x-model="q.answer" placeholder="Type your beautiful heart out..." class="w-full bg-black/40 border border-zinc-800 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-rose-500/50 text-zinc-200">
+                        
+                        <div class="pt-4 flex justify-end">
+                            <button @click="submitAnswer(index)" class="glass px-6 py-2 rounded-full text-xs tracking-widest text-amber-400" :disabled="!q.answer">
+                                NEXT QUESTION &rarr;
+                            </button>
+                        </div>
+                    </div>
+                </template>
+
+                <div x-show="qStep >= questions.length" class="text-center space-y-4 py-6">
+                    <i class="fa-solid fa-circle-check text-4xl text-emerald-400"></i>
+                    <p class="font-serif text-xl">Every memory you share blooms in my heart forever.</p>
+                    <button @click="nextChapter()" class="glass-premium px-8 py-3 rounded-full text-xs tracking-widest text-white">CONTINUE</button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template x-if="currentChapter === 6">
+        <div class="min-h-screen py-20 px-6 relative z-20 max-w-6xl mx-auto flex flex-col justify-center">
+            <h2 class="font-serif text-4xl text-center text-zinc-100 mb-2">30 Reasons Why You're My Forever</h2>
+            <p class="text-center text-zinc-500 text-xs tracking-widest mb-12">HOVER OR TAP TO REVEAL DEEP REASONS</p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                <template x-for="(reason, idx) in reasons">
+                    <div class="flip-card h-32 relative bg-transparent rounded-xl perspective-1000 cursor-pointer">
+                        <div class="flip-card-inner absolute w-full h-full text-center transition-all duration-700 rounded-xl glass flex items-center justify-center p-3">
+                            <div class="flip-card-front absolute inset-0 flex flex-col items-center justify-center p-2">
+                                <span class="text-xs font-mono text-zinc-600 mb-1" x-text="idx+1"></span>
+                                <i class="fa-solid fa-heart-pulse text-rose-500/30 text-sm"></i>
+                            </div>
+                            <div class="flip-card-back absolute inset-0 flex items-center justify-center p-4 bg-gradient-to-br from-zinc-900 to-black rounded-xl border border-rose-500/20">
+                                <p class="text-xs text-zinc-300 leading-normal" x-text="reason"></p>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <div class="mt-12 text-center">
+                <button @click="nextChapter()" class="glass-premium px-10 py-3 rounded-full text-xs tracking-widest text-amber-400">
+                    UNFOLD MY LETTER &rarr;
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <template x-if="currentChapter === 7">
+        <div class="min-h-screen flex items-center justify-center p-6 relative z-20" x-data="{ letterOpen: false }">
+            <div class="max-w-xl w-full text-center">
+                
+                <div x-show="!letterOpen" class="space-y-6">
+                    <div class="text-6xl text-amber-400 animate-float mb-4">
+                        <i class="fa-solid fa-envelope-open-text"></i>
+                    </div>
+                    <h2 class="font-serif text-3xl text-zinc-200">A Premium Love Letter for Sana</h2>
+                    <button @click="letterOpen = true" class="glass-premium px-8 py-3 rounded-full text-xs tracking-widest text-white hover:scale-105 transition-all">
+                        OPEN ENVELOPE
+                    </button>
+                </div>
+
+                <div x-show="letterOpen" class="glass-premium p-8 rounded-xl text-left border border-amber-500/20 space-y-4 shadow-2xl max-h-[80vh] overflow-y-auto">
+                    <div class="flex justify-between border-b border-zinc-800 pb-4 text-xs tracking-widest text-zinc-500">
+                        <span>TO: SANA SHAIKH</span>
+                        <span>DATE: 18 JULY 2026</span>
+                    </div>
+                    <div class="font-serif text-lg text-zinc-300 space-y-4 leading-relaxed pt-2">
+                        <p>My Dearest Sana,</p>
+                        <p>Four years ago, my life found its true rhythm when you walked into it. Looking back at everything we've shared—the soft whispers, the deep late-night conversations, the endless shared laughs, and even the tiny silent updates—I realize how completely beautifully you have rewritten my world.</p>
+                        <p>You aren't just my partner; you are my quiet sanctuary, my brightest happiness, and my greatest blessing. Thank you for staying true, for believing in us, and for showering me with a love that feels both grandly epic and beautifully intimate every single day.</p>
+                        <p>As we mark our 4th Relationship Anniversary today, I give you my heart all over again, more boundlessly and securely than ever before.</p>
+                        <p class="text-right italic text-amber-300 pt-4">Forever Yours,</p>
+                        <p class="text-right font-sans tracking-widest text-xs text-white">RIHAN I SHAIKH ❤️</p>
+                    </div>
+                    <div class="pt-6 flex justify-center border-t border-zinc-800">
+                        <button @click="nextChapter()" class="glass px-8 py-2 rounded-full text-xs tracking-widest text-rose-300">
+                            STEP INTO MY HEART &rarr;
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template x-if="currentChapter === 8">
+        <div class="min-h-screen flex items-center justify-center p-6 relative z-20">
+            <div class="max-w-lg text-center space-y-8" x-data="{ innerStep: 1 }">
+                
+                <div x-show="innerStep === 1" class="space-y-4">
+                    <p class="font-serif text-2xl text-zinc-400 italic">Every single heartbeat asks me the same question...</p>
+                    <h2 class="font-serif text-4xl text-amber-200">How did I become so lucky?</h2>
+                    <button @click="innerStep = 2" class="glass px-6 py-2 rounded-full text-xs mt-4">BECAUSE YOU ARE MAGIC</button>
+                </div>
+
+                <div x-show="innerStep === 2" class="space-y-4">
+                    <h2 class="font-serif text-3xl text-zinc-200">Do you know how proud I am to call you mine?</h2>
+                    <div class="flex gap-4 justify-center pt-2">
+                        <button @click="innerStep = 3" class="glass px-6 py-2 rounded-full text-xs text-rose-300">❤️ YES</button>
+                        <button @click="innerStep = 3" class="glass px-6 py-2 rounded-full text-xs text-rose-300">🥹 NOW I DO</button>
+                    </div>
+                </div>
+
+                <div x-show="innerStep === 3" class="space-y-4">
+                    <h2 class="font-serif text-2xl text-zinc-200">Can you guess how many times I thank God for you?</h2>
+                    <div class="flex gap-4 justify-center pt-2">
+                        <button @click="nextChapter()" class="glass px-6 py-2 rounded-full text-xs text-amber-400">EVERY DAY ❤️</button
